@@ -21,7 +21,7 @@
   }
 
   .btn-primary {
-    @apply border bg-slate-700 border-slate-700 text-lime-400;
+    @apply border border-[#fc0137] text-[#fc0137];
   }
 
   .btn-primary-outline {
@@ -29,6 +29,6 @@
   }
 
   .btn-danger {
-    @apply text-white bg-[#ff4d4d] border-[#ff4d4d];
+    @apply text-black bg-[#eee] border-[#eee];
   }
 }
