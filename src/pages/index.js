@@ -1,6 +1,7 @@
 import Head from 'next/head'
 
 import Header from 'components/Header'
+import Expenses from 'components/Expenses'
 
 export default function Home () {
   return (
@@ -14,7 +15,7 @@ export default function Home () {
 
       <Header />
 
-      <h1>Content app</h1>
+      <Expenses />
     </>
   )
 }
