@@ -1,5 +1,4 @@
 import { ImStatsDots } from 'react-icons/im'
-import Button from './Button'
 
 export default function Header () {
   return (
@@ -18,9 +17,9 @@ export default function Header () {
           </div>
           <nav className='flex items-center gap-2'>
             <ImStatsDots className='text-2xl' />
-            <Button>
+            <button className='btn btn-danger px-2'>
               Cerrar Sesión
-            </Button>
+            </button>
           </nav>
         </div>
       </header>
