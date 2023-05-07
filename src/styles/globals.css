@@ -3,15 +3,29 @@
 @tailwind components;
 
 @import url('normalize.css');
-@import url('normal-styles.css');
 
-body {
-  @apply bg-[#22272e] text-[#cdd9e5]
+@layer base {
+  body {
+    @apply bg-[#22272e] text-[#cdd9e5]
+  }
+
+  button {
+    @apply transition-all duration-500 hover:scale-110;
+  }
 }
+
 
 @layer utilities {
   .btn {
      @apply px-4 py-2 text-sm rounded-full;
+  }
+
+  .btn-primary {
+    @apply border bg-slate-700 border-slate-700 text-lime-400;
+  }
+
+  .btn-primary-outline {
+    @apply border border-lime-400 text-lime-400;
   }
 
   .btn-danger {
