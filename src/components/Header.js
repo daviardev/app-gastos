@@ -1,4 +1,5 @@
 import { ImStatsDots } from 'react-icons/im'
+import { AiOutlineLogout } from 'react-icons/ai'
 
 export default function Header () {
   return (
@@ -13,12 +14,15 @@ export default function Header () {
                 className='w-full h-full object-cover'
               />
             </div>
-            <small>Bienvenido, daviardev</small>
+            <small className='hidden xl:flex md:flex'>Bienvenido, daviardev</small>
           </div>
           <nav className='flex items-center gap-2'>
-            <ImStatsDots className='text-2xl' />
-            <button className='btn btn-danger px-2'>
+            <ImStatsDots className='text-2xl mr-6' />
+            <button className='hidden xl:flex lg:flex btn btn-danger px-2'>
               Cerrar Sesión
+            </button>
+            <button className='text-2xl sm:flex md:flex lg:hidden text-[#eee] -rotate-90 cursor-pointer'>
+              <AiOutlineLogout />
             </button>
           </nav>
         </div>
