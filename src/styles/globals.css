@@ -9,6 +9,14 @@
     @apply bg-[#22272e] text-[#cdd9e5]
   }
 
+  body::-webkit-scrollbar {
+    @apply w-1;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    @apply bg-gray-500 rounded-full;
+  }
+
   button {
     @apply transition-all duration-500 hover:scale-110;
   }
