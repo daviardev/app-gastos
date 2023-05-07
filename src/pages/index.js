@@ -5,7 +5,39 @@ import ExpenseCategory from 'components/ExpenseCategory'
 
 import { currencyFormatter } from 'utils/currencyFormatter'
 
-export default function Home () {
+export default function Home ({ color, title, amount }) {
+  const DB_DATE = [
+    {
+      id: 1,
+      title: 'ryzen 5 5600g',
+      color: '#ff0',
+      amount: 59180349
+    },
+    {
+      id: 2,
+      title: 'board b450m',
+      color: '#000',
+      amount: 3784845
+    },
+    {
+      id: 3,
+      title: 'gabinete corsair 4000d airflow ATX',
+      color: '#eee',
+      amount: 44264105
+    },
+    {
+      id: 4,
+      title: 'redragon KUMARA k552 rojo y RGB',
+      color: 'blue',
+      amount: 18634820
+    },
+    {
+      id: 5,
+      title: 'rx 550 4GB',
+      color: 'red',
+      amount: 46128053
+    }
+  ]
   return (
     <>
       <Head>
@@ -31,7 +63,16 @@ export default function Home () {
         <section className='py-6'>
           <h3 className='text-2xl'>Mis gastos</h3>
           <div className='flex flex-col gap-4 mt-6'>
-            <ExpenseCategory />
+            {DB_DATE.map(index => {
+              return (
+                <ExpenseCategory
+                  key={index.id}
+                  title={index.title}
+                  color={index.color}
+                  amount={index.amount}
+                />
+              )
+            })}
           </div>
         </section>
       </main>
