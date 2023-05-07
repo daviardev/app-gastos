@@ -1,5 +1,7 @@
 import Head from 'next/head'
 
+import Header from 'components/Header'
+
 export default function Home () {
   return (
     <>
@@ -9,6 +11,10 @@ export default function Home () {
         <meta name='description' content='Controla y haz seguimiento a todos tus gastos 💸' />
         <link rel='icon' href='https://emojitool.com/img/facebook/4.0/money-with-wings-4033.png' />
       </Head>
+
+      <Header />
+
+      <h1>Content app</h1>
     </>
   )
 }

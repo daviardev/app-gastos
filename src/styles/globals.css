@@ -3,7 +3,18 @@
 @tailwind components;
 
 @import url('normalize.css');
+@import url('normal-styles.css');
 
 body {
   @apply bg-[#22272e] text-[#cdd9e5]
+}
+
+@layer utilities {
+  .btn {
+     @apply px-4 py-2 text-sm rounded-full;
+  }
+
+  .btn-danger {
+    @apply text-white bg-[#ff4d4d] border-[#ff4d4d];
+  }
 }
