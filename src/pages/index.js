@@ -12,7 +12,7 @@ import ExpenseCategory from 'components/ExpenseCategory'
 import { currencyFormatter } from 'utils/currencyFormatter'
 
 export default function Home ({ color, title, amount }) {
-  const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [modalIncomeIsOpen, setModalIncomeIsOpen] = useState(false)
 
   ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -60,10 +60,35 @@ export default function Home ({ color, title, amount }) {
       <Header />
 
       <Modal
-        show={modalIsOpen}
-        onClose={setModalIsOpen}
+        show={modalIncomeIsOpen}
+        onClose={setModalIncomeIsOpen}
       >
-        <h3>Modal</h3>
+        <form className='input-group'>
+          <div className='input-group'>
+            <label htmlFor='amount' className='flex px-2'>Ingrese el nuevo saldo</label>
+            <input
+              step={100}
+              type='number'
+              required
+              className='input'
+              placeholder='Ingrese la cantidad de saldo'
+            />
+          </div>
+          <div className='input-group'>
+            <label htmlFor='description' className='flex px-2'>Ingrese una descripción</label>
+            <input
+              type='text'
+              required
+              className='input'
+              placeholder='Ingrese una descripción'
+            />
+          </div>
+          <div className='flex justify-center'>
+            <button type='submit' className='btn btn-primary-outline w-[50%]'>
+              Añadir saldo
+            </button>
+          </div>
+        </form>
       </Modal>
       <main className='container max-w-2xl px-6 mx-auto'>
         <section className='py-2'>
@@ -72,8 +97,8 @@ export default function Home ({ color, title, amount }) {
         </section>
 
         <section className='flex items-center gap-2 py-3'>
-          <button onClick={() => setModalIsOpen(true)} className='btn btn-primary'>+ Añadir gastos</button>
-          <button className='btn btn-primary-outline'>+ Añadir saldo</button>
+          <button className='btn btn-primary'>+ Añadir gastos</button>
+          <button onClick={() => setModalIncomeIsOpen(true)} className='btn btn-primary-outline'>+ Añadir saldo</button>
         </section>
 
         <section className='py-6'>
