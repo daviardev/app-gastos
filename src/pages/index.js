@@ -1,11 +1,16 @@
 import Head from 'next/head'
 
+import { Doughnut } from 'react-chartjs-2'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+
 import Header from 'components/Header'
 import ExpenseCategory from 'components/ExpenseCategory'
 
 import { currencyFormatter } from 'utils/currencyFormatter'
 
 export default function Home ({ color, title, amount }) {
+  ChartJS.register(ArcElement, Tooltip, Legend)
+
   const DB_DATE = [
     {
       id: 1,
@@ -57,7 +62,7 @@ export default function Home ({ color, title, amount }) {
 
         <section className='flex items-center gap-2 py-3'>
           <button className='btn btn-primary'>+ Añadir gastos</button>
-          <button className='btn btn-primary-outline'>+ Añadir ingreso</button>
+          <button className='btn btn-primary-outline'>+ Añadir saldo</button>
         </section>
 
         <section className='py-6'>
@@ -73,6 +78,26 @@ export default function Home ({ color, title, amount }) {
                 />
               )
             })}
+          </div>
+        </section>
+
+        <section className='py-6'>
+          <h3 className='text-2xl'>Estadísticas</h3>
+          <div className='xl:w-1/3 2xl:w-1/3 mx-auto md:1/4 sm:w-1/4'>
+            <Doughnut
+              data={{
+                labels: DB_DATE.map(index => index.title),
+                datasets: [
+                  {
+                    label: 'Expenses',
+                    data: DB_DATE.map(index => index.amount),
+                    backgroundColor: DB_DATE.map(index => index.color),
+                    borderColor: '#000',
+                    borderWidth: 3
+                  }
+                ]
+              }}
+            />
           </div>
         </section>
       </main>
