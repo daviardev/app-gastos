@@ -1,14 +1,19 @@
+import { useState } from 'react'
+
 import Head from 'next/head'
 
 import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
+import Modal from 'components/Modal'
 import Header from 'components/Header'
 import ExpenseCategory from 'components/ExpenseCategory'
 
 import { currencyFormatter } from 'utils/currencyFormatter'
 
 export default function Home ({ color, title, amount }) {
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+
   ChartJS.register(ArcElement, Tooltip, Legend)
 
   const DB_DATE = [
@@ -54,6 +59,12 @@ export default function Home ({ color, title, amount }) {
 
       <Header />
 
+      <Modal
+        show={modalIsOpen}
+        onClose={setModalIsOpen}
+      >
+        <h3>Modal</h3>
+      </Modal>
       <main className='container max-w-2xl px-6 mx-auto'>
         <section className='py-2'>
           <small className='text-gray-400 text-md'>Mi saldo</small>
@@ -61,7 +72,7 @@ export default function Home ({ color, title, amount }) {
         </section>
 
         <section className='flex items-center gap-2 py-3'>
-          <button className='btn btn-primary'>+ Añadir gastos</button>
+          <button onClick={() => setModalIsOpen(true)} className='btn btn-primary'>+ Añadir gastos</button>
           <button className='btn btn-primary-outline'>+ Añadir saldo</button>
         </section>
 
