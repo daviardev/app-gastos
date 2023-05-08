@@ -6,7 +6,7 @@
 
 @layer base {
   body {
-    @apply dark:bg-[#22272e] dark:text-[#cdd9e5];
+    @apply bg-[#22272e] text-[#cdd9e5];
   }
 
   body::-webkit-scrollbar {
