@@ -57,4 +57,12 @@ input[type=number] {
   .input-group {
     @apply flex flex-col gap-4;
   }
+
+  .history-scroll::-webkit-scrollbar {
+    @apply w-1;
+  }
+
+  .history-scroll::-webkit-scrollbar-thumb {
+    @apply bg-gray-500 rounded-full;
+  }
 }
