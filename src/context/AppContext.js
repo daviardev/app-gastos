@@ -1,16 +1,18 @@
 import { useState, createContext, useEffect } from 'react'
 
 import { db } from 'firebase/client'
-import { collection, addDoc, doc, deleteDoc } from 'firebase/firestore'
+import { collection, addDoc, doc, deleteDoc, getDocs } from 'firebase/firestore'
 
 export const AppContext = createContext({
     income: [],
+    expenses: [],
     addIncomeItem: async () => {},
     removeIncomeItem: async () => {}
 })
 
-export const AppContextProvider = props => {
+export const AppContextProvider = ({ children }) => {
     const [income, setIncome] = useState([])
+    const [expenses, setExpenses] = useState([])
 
     const addIncomeItem = async newIncome => {    
         const collectionRef = collection(db, 'ingresos')
@@ -39,7 +41,7 @@ export const AppContextProvider = props => {
           const docsSnap = await getDocs(collectionRef)
     
           const data = docsSnap.docs.map(doc => {
-            return {
+            return { 
               id: doc.id,
               ...doc.data(),
               createdAt: new Date(doc.data().createdAt.toMillis())
@@ -48,7 +50,21 @@ export const AppContextProvider = props => {
     
           setIncome(data)
         }
+
+        const getExpensesData = async () => {
+          const collectionRef = collection(db, 'ingresos')
+          const docsSnap = await getDocs(collectionRef)
+
+          const data = docsSnap.docs.map(doc => {
+            return {
+              id: doc.id,
+              ...doc.data()
+            }
+          })
+          setExpenses(data)
+        }
         getIncomeDate()
+        getExpensesData()
       }, [])
 
       const removeIncomeItem = async incomeId => {
@@ -66,12 +82,13 @@ export const AppContextProvider = props => {
 
       const values = {
         income,
+        expenses,
         addIncomeItem,
         removeIncomeItem
       }
     return (
         <AppContext.Provider value={values}>
-            {props.children}
+            {children}
         </AppContext.Provider>
     )
 }

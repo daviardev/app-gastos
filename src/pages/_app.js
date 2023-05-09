@@ -4,7 +4,7 @@ import { AppContext } from 'context/AppContext'
 
 export default function App ({ Component, pageProps }) {
   return (
-    <AppContext children={children}>
+    <AppContext>
       <Component { ...pageProps } />
     </AppContext>
   )
