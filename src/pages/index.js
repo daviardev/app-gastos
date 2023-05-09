@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 import Head from 'next/head'
 
@@ -11,8 +11,11 @@ import ExpenseCategory from 'components/ExpenseCategory'
 
 import { currencyFormatter } from 'utils/currencyFormatter'
 
-export default function Home ({ color, title, amount }) {
+export default function Home () {
   const [modalIncomeIsOpen, setModalIncomeIsOpen] = useState(false)
+
+  const amountRef = useRef()
+  const descriptionRef = useRef()
 
   ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -48,6 +51,18 @@ export default function Home ({ color, title, amount }) {
       amount: 46128053
     }
   ]
+
+  const handlerIncome = e => {
+    e.preventDefault()
+
+    const newIncome = {
+      amount: amountRef.current.value,
+      description: descriptionRef.current.value,
+      createdAt: new Date()
+    }
+
+    console.log(newIncome)
+  }
   return (
     <>
       <Head>
@@ -63,10 +78,11 @@ export default function Home ({ color, title, amount }) {
         show={modalIncomeIsOpen}
         onClose={setModalIncomeIsOpen}
       >
-        <form className='input-group'>
+        <form className='input-group' onSubmit={handlerIncome}>
           <div className='input-group'>
             <label htmlFor='amount' className='flex px-2'>Ingrese el nuevo saldo</label>
             <input
+              ref={amountRef}
               step={100}
               type='number'
               required
@@ -77,6 +93,7 @@ export default function Home ({ color, title, amount }) {
           <div className='input-group'>
             <label htmlFor='description' className='flex px-2'>Ingrese una descripción</label>
             <input
+              ref={descriptionRef}
               type='text'
               required
               className='input'
