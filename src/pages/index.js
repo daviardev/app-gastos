@@ -1,9 +1,12 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 
 import Head from 'next/head'
 
 import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+
+import { db } from 'firebase/client'
+import { collection, addDoc } from 'firebase/firestore'
 
 import Modal from 'components/Modal'
 import Header from 'components/Header'
@@ -12,10 +15,10 @@ import ExpenseCategory from 'components/ExpenseCategory'
 import { currencyFormatter } from 'utils/currencyFormatter'
 
 export default function Home () {
+  const [loading, setLoading] = useState(false)
+  const [inputAmount, setInputAmount] = useState('')
+  const [inputDescription, setInputDescription] = useState('')
   const [modalIncomeIsOpen, setModalIncomeIsOpen] = useState(false)
-
-  const amountRef = useRef()
-  const descriptionRef = useRef()
 
   ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -52,16 +55,25 @@ export default function Home () {
     }
   ]
 
-  const handlerIncome = e => {
+  const handlerIncome = async e => {
     e.preventDefault()
 
-    const newIncome = {
-      amount: amountRef.current.value,
-      description: descriptionRef.current.value,
-      createdAt: new Date()
+    if (loading) return
+    setLoading(true)
+
+    try {
+      await addDoc(collection(db, 'ingresos'), {
+        amount: inputAmount,
+        description: inputDescription,
+        createdAt: new Date()
+      })
+    } catch (err) {
+      console.error(err)
     }
 
-    console.log(newIncome)
+    setLoading(false)
+    setInputAmount('')
+    setInputDescription('')
   }
   return (
     <>
@@ -82,26 +94,32 @@ export default function Home () {
           <div className='input-group'>
             <label htmlFor='amount' className='flex px-2'>Ingrese el nuevo saldo</label>
             <input
-              ref={amountRef}
+              value={inputAmount}
               step={100}
               type='number'
+              onChange={e => setInputAmount(e.target.value)}
               required
-              className='input'
+              className={`input ${loading && 'opacity-60'}`}
               placeholder='Ingrese la cantidad de saldo'
             />
           </div>
           <div className='input-group'>
             <label htmlFor='description' className='flex px-2'>Ingrese una descripción</label>
             <input
-              ref={descriptionRef}
               type='text'
+              value={inputDescription}
+              onChange={e => setInputDescription(e.target.value)}
               required
-              className='input'
+              className={`input ${loading && 'opacity-60'}`}
               placeholder='Ingrese una descripción'
             />
           </div>
           <div className='flex justify-center'>
-            <button type='submit' className='btn btn-primary-outline w-[50%]'>
+            <button
+              type='submit'
+              className={`btn btn-primary-outline w-[50%] disabled:opacity-40 ${loading && 'opacity-60'}`}
+              disabled={!inputDescription.trim()}
+            >
               Añadir saldo
             </button>
           </div>
