@@ -1,5 +1,7 @@
 import { initializeApp, getApp, getApps } from 'firebase/app'
 
+import { getFirestore } from 'firebase/firestore'
+
 const firebaseConfig = {
   apiKey: 'AIzaSyA2KJmVnu4KqudjNIjBQpNsFvnrNeLoE1E',
   authDomain: 'aplicacion-gastos.firebaseapp.com',
@@ -10,3 +12,4 @@ const firebaseConfig = {
 }
 
 export const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
+export const db = getFirestore()
