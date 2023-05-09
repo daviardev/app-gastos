@@ -7,7 +7,7 @@ import { FaRegTrashAlt } from 'react-icons/fa'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
 import { db } from 'firebase/client'
-import { collection, addDoc, getDocs } from 'firebase/firestore'
+import { collection, addDoc, getDocs, doc, deleteDoc } from 'firebase/firestore'
 
 import Modal from 'components/Modal'
 import Header from 'components/Header'
@@ -67,11 +67,25 @@ export default function Home () {
     if (loading) return
     setLoading(true)
 
+    const newIncome = {
+      amount: Number(inputAmount),
+      description: inputDescription,
+      createdAt: new Date()
+    }
+
+    const collectionRef = collection(db, 'ingresos')
+
     try {
-      await addDoc(collection(db, 'ingresos'), {
-        amount: Number(inputAmount),
-        description: inputDescription,
-        createdAt: new Date()
+      const docSnap = await addDoc(collectionRef, newIncome)
+
+      setIncome(prevState => {
+        return [
+          ...prevState,
+          {
+            id: docSnap.id,
+            ...newIncome
+          }
+        ]
       })
     } catch (err) {
       console.error(err)
@@ -99,6 +113,19 @@ export default function Home () {
     }
     getIncomeDate()
   }, [])
+
+  const deleteIncomeEntry = async incomeId => {
+    const docRef = doc(db, 'ingresos', incomeId)
+
+    try {
+      await deleteDoc(docRef)
+      setIncome(prevState => {
+        return prevState.filter(index => index.id !== incomeId)
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  }
   return (
     <>
       <Head>
@@ -161,7 +188,10 @@ export default function Home () {
                   </div>
                   <p className='flex items-center gap-2'>
                     {currencyFormatter(index.amount)}
-                    <button className='hover:text-red-500'>
+                    <button
+                      onClick={() => deleteIncomeEntry(index.id)}
+                      className='hover:text-red-500'
+                    >
                       <FaRegTrashAlt />
                     </button>
                   </p>
