@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Head from 'next/head'
 
 import { Doughnut } from 'react-chartjs-2'
+import { FaRegTrashAlt } from 'react-icons/fa'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
 import { db } from 'firebase/client'
-import { collection, addDoc } from 'firebase/firestore'
+import { collection, addDoc, getDocs } from 'firebase/firestore'
 
 import Modal from 'components/Modal'
 import Header from 'components/Header'
@@ -15,12 +16,17 @@ import ExpenseCategory from 'components/ExpenseCategory'
 import { currencyFormatter } from 'utils/currencyFormatter'
 
 export default function Home () {
-  const [loading, setLoading] = useState(false)
+  const [income, setIncome] = useState([])
+
   const [inputAmount, setInputAmount] = useState('')
   const [inputDescription, setInputDescription] = useState('')
+
+  const [loading, setLoading] = useState(false)
   const [modalIncomeIsOpen, setModalIncomeIsOpen] = useState(false)
 
   ChartJS.register(ArcElement, Tooltip, Legend)
+
+  console.log(income)
 
   const DB_DATE = [
     {
@@ -63,7 +69,7 @@ export default function Home () {
 
     try {
       await addDoc(collection(db, 'ingresos'), {
-        amount: inputAmount,
+        amount: Number(inputAmount),
         description: inputDescription,
         createdAt: new Date()
       })
@@ -75,6 +81,24 @@ export default function Home () {
     setInputAmount('')
     setInputDescription('')
   }
+
+  useEffect(() => {
+    const getIncomeDate = async () => {
+      const collectionRef = collection(db, 'ingresos')
+      const docsSnap = await getDocs(collectionRef)
+
+      const data = docsSnap.docs.map(doc => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+          createdAt: new Date(doc.data().createdAt.toMillis())
+        }
+      })
+
+      setIncome(data)
+    }
+    getIncomeDate()
+  }, [])
   return (
     <>
       <Head>
@@ -124,6 +148,28 @@ export default function Home () {
             </button>
           </div>
         </form>
+
+        <div className='input-group mt-6'>
+          <h3 className='text-2xl font-bold'>Historial de ingresos</h3>
+          <div className='h-[150px] overflow-auto history-scroll'>
+            {income.map(index => {
+              return (
+                <div className='mb-4 flex justify-between item-center' key={index.id}>
+                  <div>
+                    <p className='font-semibold'>{index.description}</p>
+                    <small className='text-xs'>{index.createdAt.toISOString()}</small>
+                  </div>
+                  <p className='flex items-center gap-2'>
+                    {currencyFormatter(index.amount)}
+                    <button className='hover:text-red-500'>
+                      <FaRegTrashAlt />
+                    </button>
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
       </Modal>
       <main className='container max-w-2xl px-6 mx-auto'>
         <section className='py-2'>
