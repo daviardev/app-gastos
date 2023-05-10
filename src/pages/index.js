@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 
 import Head from 'next/head'
 
@@ -12,12 +12,26 @@ import ExpenseCategory from 'components/ExpenseCategory'
 import { AppContext } from 'context/AppContext'
 import { currencyFormatter } from 'utils/currencyFormatter'
 
+ChartJS.register(ArcElement, Tooltip, Legend)
+
 export default function Home () {
+  const [balance, setBalance] = useState(0)
   const [modalIncomeIsOpen, setModalIncomeIsOpen] = useState(false)
 
-  const { expenses } = useContext(AppContext)
+  const { income, expenses } = useContext(AppContext)
 
-  ChartJS.register(ArcElement, Tooltip, Legend)
+  useEffect(() => {
+    const newBalance =
+    income.reduce((total, index) => {
+      return total + index.amount
+    }, 0)
+
+    expenses.reduce((total, index) => {
+      return total + index.total
+    }, 0)
+    setBalance(newBalance)
+  }, [expenses, income])
+
   return (
     <>
       <Head>
@@ -37,7 +51,7 @@ export default function Home () {
       <main className='container max-w-2xl px-6 mx-auto'>
         <section className='py-2'>
           <small className='text-gray-400 text-md'>Mi saldo</small>
-          <h2 className='text-4xl font-bold'>{currencyFormatter(200000)}</h2>
+          <h2 className='text-4xl font-bold'>{currencyFormatter(balance)}</h2>
         </section>
 
         <section className='flex items-center gap-2 py-3'>
