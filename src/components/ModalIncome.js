@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 import { AppContext } from 'context/AppContext'
 import { currencyFormatter } from 'utils/currencyFormatter'
@@ -44,8 +44,8 @@ export default function ModalIncome ({ show, onClose }) {
       console.error(err)
     }
   }
-    return (
-      <>
+  return (
+    <>
       <Modal
         show={show}
         onClose={onClose}
@@ -110,6 +110,6 @@ export default function ModalIncome ({ show, onClose }) {
           </div>
         </div>
       </Modal>
-        </>
-    )
+    </>
+  )
 }
