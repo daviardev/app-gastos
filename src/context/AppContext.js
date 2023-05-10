@@ -52,7 +52,7 @@ export const AppContextProvider = ({ children }) => {
     }
 
     const getExpensesData = async () => {
-      const collectionRef = collection(db, 'ingresos')
+      const collectionRef = collection(db, 'gastos')
       const docsSnap = await getDocs(collectionRef)
 
       const data = docsSnap.docs.map(doc => {

@@ -54,7 +54,7 @@ export default function Home () {
                   key={index.id}
                   title={index.title}
                   color={index.color}
-                  amount={index.amount}
+                  total={index.total}
                 />
               )
             })}
@@ -70,7 +70,7 @@ export default function Home () {
                 datasets: [
                   {
                     label: 'Expenses',
-                    data: expenses.map(index => index.amount),
+                    data: expenses.map(index => index.total),
                     backgroundColor: expenses.map(index => index.color),
                     borderColor: '#000',
                     borderWidth: 3
