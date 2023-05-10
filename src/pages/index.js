@@ -33,7 +33,7 @@ export default function Home () {
         show={modalIncomeIsOpen}
         onClose={setModalIncomeIsOpen}
       />
-      
+
       <main className='container max-w-2xl px-6 mx-auto'>
         <section className='py-2'>
           <small className='text-gray-400 text-md'>Mi saldo</small>
