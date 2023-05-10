@@ -54,6 +54,7 @@ export default function ModalIncome ({ show, onClose }) {
           <div className='input-group'>
             <label htmlFor='amount' className='flex px-2'>Ingrese el nuevo saldo</label>
             <input
+              min={100}
               value={inputAmount}
               step={100}
               type='number'
