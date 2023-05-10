@@ -7,6 +7,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
 import Header from 'components/Header'
 import ModalIncome from 'components/ModalIncome'
+import ModalExpenses from 'components/ModalExpenses'
 import ExpenseCategory from 'components/ExpenseCategory'
 
 import { AppContext } from 'context/AppContext'
@@ -17,6 +18,7 @@ ChartJS.register(ArcElement, Tooltip, Legend)
 export default function Home () {
   const [balance, setBalance] = useState(0)
   const [modalIncomeIsOpen, setModalIncomeIsOpen] = useState(false)
+  const [modalExpensesIsOpen, setModalExpensesIsOpen] = useState(false)
 
   const { income, expenses } = useContext(AppContext)
 
@@ -48,6 +50,11 @@ export default function Home () {
         onClose={setModalIncomeIsOpen}
       />
 
+      <ModalExpenses
+        show={modalExpensesIsOpen}
+        onClose={setModalExpensesIsOpen}
+      />
+
       <main className='container max-w-2xl px-6 mx-auto'>
         <section className='py-2'>
           <small className='text-gray-400 text-md'>Mi saldo</small>
@@ -55,7 +62,7 @@ export default function Home () {
         </section>
 
         <section className='flex items-center gap-2 py-3'>
-          <button className='btn btn-primary'>+ Añadir gastos</button>
+          <button onClick={() => setModalExpensesIsOpen(true)} className='btn btn-primary'>+ Añadir gastos</button>
           <button onClick={() => setModalIncomeIsOpen(true)} className='btn btn-primary-outline'>+ Añadir saldo</button>
         </section>
 
@@ -83,7 +90,7 @@ export default function Home () {
                 labels: expenses.map(index => index.title),
                 datasets: [
                   {
-                    label: 'Expenses',
+                    label: 'Gasto',
                     data: expenses.map(index => index.total),
                     backgroundColor: expenses.map(index => index.color),
                     borderColor: '#000',
