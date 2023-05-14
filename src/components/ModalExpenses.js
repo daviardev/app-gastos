@@ -8,10 +8,16 @@ import Modal from './Modal'
 
 export default function ModalExpenses ({ show, onClose }) {
   const [loading, setLoading] = useState(false)
+
+  const [inputTitle, setInputTitle] = useState('')
+  const [inputColor, setInputColor] = useState('')
   const [inputExponses, setInputExponses] = useState('')
+
   const [selectCategory, setSelectCategory] = useState(null)
 
-  const { expenses, addExpenseItem } = useContext(AppContext)
+  const [showAddExpense, setShowAddExpense] = useState(false)
+
+  const { expenses, addExpenseItem, addCategory } = useContext(AppContext)
 
   const handlerExpenses = async () => {
     if (loading) return
@@ -42,8 +48,30 @@ export default function ModalExpenses ({ show, onClose }) {
       setLoading(false)
       setInputExponses('')
       setSelectCategory(null)
+      setShowAddExpense(false)
     } catch (err) {
       console.error(err)
+    }
+  }
+
+  const addCategoryHandler = async () => {
+    if (loading) return
+    setLoading(true)
+
+    const title = inputTitle
+    const color = inputColor
+
+    try {
+      await addCategory({ title, color, total: 0 })
+
+      onClose()
+      setInputTitle('')
+      setInputExponses('')
+      setInputColor('#000')
+      setShowAddExpense(false)
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
     }
   }
   return (
@@ -52,59 +80,99 @@ export default function ModalExpenses ({ show, onClose }) {
         show={show}
         onClose={onClose}
       >
-        <form className='input-group' onSubmit={e => e.preventDefault()}>
-          <div className='input-group'>
-            <label htmlFor='exponses' className='flex px-2'>Ingrese gasto</label>
-            <input
-              min={100}
-              value={inputExponses}
-              step={100}
-              type='number'
-              onChange={e => setInputExponses(e.target.value)}
-              required
-              className={`input ${loading && 'opacity-60'}`}
-              placeholder='Ingrese la cantidad que va a gastar'
-            />
-          </div>
-          {inputExponses > 0 && (
-            <div className='flex flex-col gap-4 h-full overflow-auto history-scroll'>
-              <h3 className='text-2xl font-bold'>Historial de categorías</h3>
-              {expenses.map(index => {
-                return (
+        <div className='input-group'>
+          <label htmlFor='exponses' className='flex px-2'>Ingrese gasto</label>
+          <input
+            min={100}
+            value={inputExponses}
+            step={100}
+            type='number'
+            onChange={e => setInputExponses(e.target.value)}
+            required
+            className={`input ${loading && 'opacity-60'}`}
+            placeholder='Ingrese la cantidad que va a gastar'
+          />
+        </div>
+        {inputExponses > 0 && (
+          <div className='flex flex-col gap-4 h-full overflow-auto history-scroll'>
+            <div className='flex flex-col gap-4 mt-6'>
+              <div className='flex items-center justify-between'>
+                <h3 className='text-1xl'>Seleccione una de las categorías creadas</h3>
+                <button className='btn btn-primary-outline' onClick={() => setShowAddExpense(true)}>
+                  Crear nueva categoría
+                </button>
+              </div>
+              {showAddExpense && (
+                <div className='flex items-center justify-between'>
+                  <input
+                    type='text'
+                    value={inputTitle}
+                    onChange={e => setInputTitle(e.target.value)}
+                    placeholder='Ingrese título'
+                    className={`${loading && 'opacity-60'}`}
+                  />
+
+                  <label>Escoja color</label>
+                  <input
+                    type='color'
+                    value={inputColor}
+                    onChange={e => setInputColor(e.target.value)}
+                    className={`w-24 h-10 input ${loading && 'opacity-60'}`}
+                  />
                   <button
-                    key={index.id}
-                    onClick={() => setSelectCategory(index.id)}
+                    onClick={addCategoryHandler}
+                    className={`btn btn-primary-outline disabled:opacity-40 ${loading && 'opacity-60'}`}
+                    disabled={!inputTitle.trim()}
                   >
-                    <div
-                      style={{ boxShadow: index.id === selectCategory ? '1px 1px 4px' : 'none' }}
-                      className='flex items-center justify-between px-2 py-2 bg-slate-700 rounded-full'
-                    >
-                      <div className='flex items-center gap-2'>
-                        <div
-                          style={{ backgroundColor: index.color }}
-                          className='w-[25px] h-[25px] rounded-full'
-                        />
-                        <h4 className='capitalize'>{index.title}</h4>
-                      </div>
-                    </div>
+                    Crear categoría
                   </button>
-                )
-              })}
+                  <button
+                    onClick={() => {
+                      setShowAddExpense(false)
+                    }}
+                    className='btn btn-danger'
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-          {inputExponses > 0 && selectCategory && (
-            <div className='flex justify-center'>
-              <button
-                type='submit'
-                onClick={handlerExpenses}
-                disabled={!inputExponses.trim()}
-                className={`btn btn-primary-outline w-[50%] disabled:opacity-40 ${loading && 'opacity-60'}`}
-              >
-                Añadir saldo
-              </button>
-            </div>
-          )}
-        </form>
+            {expenses.map(index => {
+              return (
+                <button
+                  type='button'
+                  key={index.id}
+                  onClick={() => setSelectCategory(index.id)}
+                >
+                  <div
+                    style={{ boxShadow: index.id === selectCategory ? '1px 1px 4px' : 'none' }}
+                    className='flex items-center justify-between px-2 py-2 bg-slate-700 rounded-full'
+                  >
+                    <div className='flex items-center gap-2'>
+                      <div
+                        style={{ backgroundColor: index.color }}
+                        className='w-[25px] h-[25px] rounded-full'
+                      />
+                      <h4 className='capitalize'>{index.title}</h4>
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        )}
+        {inputExponses > 0 && selectCategory && (
+          <div className='flex justify-center'>
+            <button
+              type='submit'
+              disabled={!inputExponses.trim()}
+              onClick={handlerExpenses}
+              className={`btn btn-primary-outline w-[50%] disabled:opacity-40 ${loading && 'opacity-60'}`}
+            >
+              Añadir gasto
+            </button>
+          </div>
+        )}
       </Modal>
     </>
   )
