@@ -8,12 +8,35 @@ export const AppContext = createContext({
   expenses: [],
   addIncomeItem: async () => {},
   removeIncomeItem: async () => {},
-  addExpenseItem: async () => {}
+  addExpenseItem: async () => {},
+  addCategory: async () => {}
 })
 
 export const AppContextProvider = ({ children }) => {
   const [income, setIncome] = useState([])
   const [expenses, setExpenses] = useState([])
+
+  const addCategory = async category => {
+    try {
+      const collectionRef = collection(db, 'gastos')
+
+      const docSnap = await addDoc(collectionRef, {
+        ...category,
+        items: []
+      })
+
+      setExpenses(prevExpenses => {
+        return [...prevExpenses, {
+          id: docSnap.id,
+          items: [],
+          ...category
+        }]
+      })
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
 
   const addExpenseItem = async (expenseCategoryId, newExpense) => {
     const docRef = doc(db, 'gastos', expenseCategoryId)
@@ -112,7 +135,8 @@ export const AppContextProvider = ({ children }) => {
     expenses,
     addIncomeItem,
     removeIncomeItem,
-    addExpenseItem
+    addExpenseItem,
+    addCategory
   }
   return (
     <AppContext.Provider value={values}>
