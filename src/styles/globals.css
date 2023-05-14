@@ -18,7 +18,7 @@
   }
 
   button {
-    @apply transition-all duration-500 hover:scale-105;
+    @apply transition-all duration-100 hover:scale-105;
   }
 
   input {
