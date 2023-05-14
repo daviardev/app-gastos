@@ -29,10 +29,11 @@ export default function ModalIncome ({ show, onClose }) {
 
     try {
       await addIncomeItem(newIncome)
+
+      onClose()
       setLoading(false)
       setInputAmount('')
       setInputDescription('')
-      onClose()
     } catch (err) {
       console.error(err)
     }
