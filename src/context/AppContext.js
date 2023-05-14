@@ -1,18 +1,45 @@
 import { useState, createContext, useEffect } from 'react'
 
 import { db } from 'firebase/client'
-import { collection, addDoc, doc, deleteDoc, getDocs } from 'firebase/firestore'
+import { collection, addDoc, doc, deleteDoc, getDocs, updateDoc } from 'firebase/firestore'
 
 export const AppContext = createContext({
   income: [],
   expenses: [],
   addIncomeItem: async () => {},
-  removeIncomeItem: async () => {}
+  removeIncomeItem: async () => {},
+  addExpenseItem: async () => {}
 })
 
 export const AppContextProvider = ({ children }) => {
   const [income, setIncome] = useState([])
   const [expenses, setExpenses] = useState([])
+
+  const addExpenseItem = async (expenseCategoryId, newExpense) => {
+    const docRef = doc(db, 'gastos', expenseCategoryId)
+
+    try {
+      await updateDoc(docRef, { ...newExpense })
+
+      setExpenses(prevState => {
+        const updatedExpenses = [...prevState]
+
+        const foundIndex = updatedExpenses.findIndex(expense => {
+          return expense.id === expenseCategoryId
+        })
+
+        updatedExpenses[foundIndex] = {
+          id: expenseCategoryId,
+          ...newExpense
+        }
+
+        return updatedExpenses
+      })
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
 
   const addIncomeItem = async newIncome => {
     const collectionRef = collection(db, 'ingresos')
@@ -84,7 +111,8 @@ export const AppContextProvider = ({ children }) => {
     income,
     expenses,
     addIncomeItem,
-    removeIncomeItem
+    removeIncomeItem,
+    addExpenseItem
   }
   return (
     <AppContext.Provider value={values}>
