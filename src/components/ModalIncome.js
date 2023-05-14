@@ -32,6 +32,7 @@ export default function ModalIncome ({ show, onClose }) {
       setLoading(false)
       setInputAmount('')
       setInputDescription('')
+      onClose()
     } catch (err) {
       console.error(err)
     }
