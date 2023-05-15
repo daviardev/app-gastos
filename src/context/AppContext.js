@@ -1,7 +1,7 @@
 import { useState, createContext, useEffect } from 'react'
 
 import { db } from 'firebase/client'
-import { collection, addDoc, doc, deleteDoc, getDocs, updateDoc } from 'firebase/firestore'
+import { collection, addDoc, doc, deleteDoc, getDocs, updateDoc, onSnapshot } from 'firebase/firestore'
 
 export const AppContext = createContext({
   income: [],
@@ -9,7 +9,9 @@ export const AppContext = createContext({
   addIncomeItem: async () => {},
   removeIncomeItem: async () => {},
   addExpenseItem: async () => {},
-  addCategory: async () => {}
+  addCategory: async () => {},
+  deleteExpenseItem: async () => {},
+  deleteAllDocs: async () => {}
 })
 
 export const AppContextProvider = ({ children }) => {
@@ -38,6 +40,57 @@ export const AppContextProvider = ({ children }) => {
     }
   }
 
+  const deleteAllDocs = async () => {
+    try {
+      // Obtener una referencia a cada colección que deseas eliminar
+      const incomeCollectionRef = collection(db, 'ingresos')
+      const expensesCollectionRef = collection(db, 'gastos')
+
+      // Eliminar todos los documentos dentro de la colección de ingresos
+      const incomeDocs = await getDocs(incomeCollectionRef)
+      incomeDocs.forEach(doc => {
+        deleteDoc(doc.ref)
+      })
+
+      // Eliminar todos los documentos dentro de la colección de gastos
+      const expensesDocs = await getDocs(expensesCollectionRef)
+      expensesDocs.forEach(doc => {
+        deleteDoc(doc.ref)
+      })
+
+      window.alert('Todos los documentos han sido eliminados correctamente')
+
+      // Suscribirse al evento onSnapshot() para actualizar el estado de la aplicación
+      const unsubscribeIncome = onSnapshot(incomeCollectionRef, snapshot => {
+        const data = snapshot.docs.map(doc => {
+          return {
+            id: doc.id,
+            ...doc.data()
+          }
+        })
+        setIncome(data)
+      })
+
+      const unsubscribeExpenses = onSnapshot(expensesCollectionRef, snapshot => {
+        const data = snapshot.docs.map(doc => {
+          return {
+            id: doc.id,
+            ...doc.data()
+          }
+        })
+        setExpenses(data)
+      })
+
+      // Devolver una función de limpieza para desuscribirse del evento onSnapshot()
+      return () => {
+        unsubscribeIncome()
+        unsubscribeExpenses()
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const addExpenseItem = async (expenseCategoryId, newExpense) => {
     const docRef = doc(db, 'gastos', expenseCategoryId)
 
@@ -55,6 +108,30 @@ export const AppContextProvider = ({ children }) => {
           id: expenseCategoryId,
           ...newExpense
         }
+
+        return updatedExpenses
+      })
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
+
+  const deleteExpenseItem = async (updatedExpense, expenseCategoryId) => {
+    try {
+      const docRef = doc(db, 'gastos', expenseCategoryId)
+
+      await updateDoc(docRef, {
+        ...updatedExpense
+      })
+
+      setExpenses(prevExpenses => {
+        const updatedExpenses = [...prevExpenses]
+        const pos = updatedExpenses.findIndex(
+          ex => ex.id === expenseCategoryId
+        )
+        updatedExpenses[pos].items = [...updatedExpense.items]
+        updatedExpenses[pos].total = updatedExpense.total
 
         return updatedExpenses
       })
@@ -136,7 +213,9 @@ export const AppContextProvider = ({ children }) => {
     addIncomeItem,
     removeIncomeItem,
     addExpenseItem,
-    addCategory
+    addCategory,
+    deleteExpenseItem,
+    deleteAllDocs
   }
   return (
     <AppContext.Provider value={values}>
