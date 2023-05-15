@@ -8,7 +8,16 @@ import { currencyFormatter } from 'utils/currencyFormatter'
 import Modal from './Modal'
 
 export default function ViewExpenseModal ({ show, onClose, expense }) {
-  const { deleteExpenseItem } = useContext(AppContext)
+  const { deleteExpenseItem, deleteExpenseCategory } = useContext(AppContext)
+
+  const deleteExpenseHandler = async () => {
+    try {
+      await deleteExpenseCategory(expense.id)
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
 
   const deleteExpenseItemHandler = async item => {
     try {
@@ -32,7 +41,7 @@ export default function ViewExpenseModal ({ show, onClose, expense }) {
     >
       <div className='flex items-center justify-between'>
         <h2 className='text-4xl capitalize'>{expense.title}</h2>
-        <button className='btn btn-danger'>Eliminar</button>
+        <button className='btn btn-danger' onClick={deleteExpenseHandler}>Eliminar</button>
       </div>
       <br />
       <hr />
