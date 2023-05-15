@@ -5,6 +5,7 @@ import Head from 'next/head'
 import { Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
+import SignIn from 'components/SignIn'
 import Header from 'components/Header'
 import ModalIncome from 'components/ModalIncome'
 import ModalExpenses from 'components/ModalExpenses'
@@ -13,13 +14,16 @@ import ExpenseCategory from 'components/ExpenseCategory'
 import { AppContext } from 'context/AppContext'
 import { currencyFormatter } from 'utils/currencyFormatter'
 
+import { getProviders, useSession, getSession } from 'next-auth/react'
+
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-export default function Home () {
+export default function Home ({ providers }) {
   const [balance, setBalance] = useState(0)
   const [modalIncomeIsOpen, setModalIncomeIsOpen] = useState(false)
   const [modalExpensesIsOpen, setModalExpensesIsOpen] = useState(false)
 
+  const { data: session } = useSession()
   const { income, expenses } = useContext(AppContext)
 
   useEffect(() => {
@@ -33,6 +37,8 @@ export default function Home () {
     }, 0)
     setBalance(newBalance)
   }, [expenses, income])
+
+  if (!session) return <SignIn providers={providers} />
 
   return (
     <>
@@ -102,4 +108,16 @@ export default function Home () {
       </main>
     </>
   )
+}
+
+export async function getServerSideProps (context) {
+  const providers = await getProviders()
+  const session = await getSession(context)
+
+  return {
+    props: {
+      providers,
+      session
+    }
+  }
 }

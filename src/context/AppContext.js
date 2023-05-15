@@ -42,53 +42,55 @@ export const AppContextProvider = ({ children }) => {
   }
 
   const deleteAllDocs = async () => {
-    try {
-      // Obtener una referencia a cada colección que deseas eliminar
-      const incomeCollectionRef = collection(db, 'ingresos')
-      const expensesCollectionRef = collection(db, 'gastos')
+    if (window.confirm('Se eliminarán las transacciones hechas, ¿Desea continuar?')) {
+      try {
+        // Obtener una referencia a cada colección que deseas eliminar
+        const incomeCollectionRef = collection(db, 'ingresos')
+        const expensesCollectionRef = collection(db, 'gastos')
 
-      // Eliminar todos los documentos dentro de la colección de ingresos
-      const incomeDocs = await getDocs(incomeCollectionRef)
-      incomeDocs.forEach(doc => {
-        deleteDoc(doc.ref)
-      })
-
-      // Eliminar todos los documentos dentro de la colección de gastos
-      const expensesDocs = await getDocs(expensesCollectionRef)
-      expensesDocs.forEach(doc => {
-        deleteDoc(doc.ref)
-      })
-
-      window.alert('Todos los documentos han sido eliminados correctamente')
-
-      // Suscribirse al evento onSnapshot() para actualizar el estado de la aplicación
-      const unsubscribeIncome = onSnapshot(incomeCollectionRef, snapshot => {
-        const data = snapshot.docs.map(doc => {
-          return {
-            id: doc.id,
-            ...doc.data()
-          }
+        // Eliminar todos los documentos dentro de la colección de ingresos
+        const incomeDocs = await getDocs(incomeCollectionRef)
+        incomeDocs.forEach(doc => {
+          deleteDoc(doc.ref)
         })
-        setIncome(data)
-      })
 
-      const unsubscribeExpenses = onSnapshot(expensesCollectionRef, snapshot => {
-        const data = snapshot.docs.map(doc => {
-          return {
-            id: doc.id,
-            ...doc.data()
-          }
+        // Eliminar todos los documentos dentro de la colección de gastos
+        const expensesDocs = await getDocs(expensesCollectionRef)
+        expensesDocs.forEach(doc => {
+          deleteDoc(doc.ref)
         })
-        setExpenses(data)
-      })
 
-      // Devolver una función de limpieza para desuscribirse del evento onSnapshot()
-      return () => {
-        unsubscribeIncome()
-        unsubscribeExpenses()
+        // Suscribirse al evento onSnapshot() para actualizar el estado de la aplicación
+        const unsubscribeIncome = onSnapshot(incomeCollectionRef, snapshot => {
+          const data = snapshot.docs.map(doc => {
+            return {
+              id: doc.id,
+              ...doc.data()
+            }
+          })
+          setIncome(data)
+        })
+
+        const unsubscribeExpenses = onSnapshot(expensesCollectionRef, snapshot => {
+          const data = snapshot.docs.map(doc => {
+            return {
+              id: doc.id,
+              ...doc.data()
+            }
+          })
+          setExpenses(data)
+        })
+
+        // Devolver una función de limpieza para desuscribirse del evento onSnapshot()
+        return () => {
+          unsubscribeIncome()
+          unsubscribeExpenses()
+        }
+      } catch (error) {
+        console.error(error)
       }
-    } catch (error) {
-      console.error(error)
+    } else {
+      window.alert('No se hicieron cambios.')
     }
   }
 
