@@ -73,9 +73,7 @@ export default function Home () {
               return (
                 <ExpenseCategory
                   key={index.id}
-                  title={index.title}
-                  color={index.color}
-                  total={index.total}
+                  expense={index}
                 />
               )
             })}
