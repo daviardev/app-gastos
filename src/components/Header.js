@@ -1,7 +1,16 @@
+import { useContext } from 'react'
+
 import { ImStatsDots } from 'react-icons/im'
 import { AiOutlineLogout } from 'react-icons/ai'
 
+import { AppContext } from 'context/AppContext'
+
 export default function Header () {
+  const { deleteAllDocs } = useContext(AppContext)
+
+  const removeAllDatas = async () => {
+    await deleteAllDocs()
+  }
   return (
     <>
       <header className='container max-w-2xl px-6 py-6 mx-auto'>
@@ -18,6 +27,9 @@ export default function Header () {
           </div>
           <nav className='flex items-center gap-2'>
             <ImStatsDots className='text-2xl mr-6' />
+            <button className='btn btn-primary' onClick={removeAllDatas}>
+              Restablecer valores
+            </button>
             <button className='hidden xl:flex lg:flex btn btn-danger px-2'>
               Cerrar Sesión
             </button>
