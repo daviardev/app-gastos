@@ -84,7 +84,7 @@ export default function ModalExpenses ({ show, onClose }) {
           <form className='input-group' onSubmit={handlerExpenses}>
             <label htmlFor='exponses' className='flex px-2'>Ingrese gasto</label>
             <input
-              min={100}
+              min={0.01}
               value={inputExponses}
               type='number'
               onChange={e => setInputExponses(e.target.value)}
