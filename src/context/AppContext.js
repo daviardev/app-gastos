@@ -1,7 +1,9 @@
 import { useState, createContext, useEffect } from 'react'
 
 import { db } from 'firebase/client'
-import { collection, addDoc, doc, deleteDoc, getDocs, updateDoc, onSnapshot } from 'firebase/firestore'
+import { collection, addDoc, doc, deleteDoc, getDocs, updateDoc, onSnapshot, query, where } from 'firebase/firestore'
+
+import { useSession } from 'next-auth/react'
 
 export const AppContext = createContext({
   income: [],
@@ -19,11 +21,14 @@ export const AppContextProvider = ({ children }) => {
   const [income, setIncome] = useState([])
   const [expenses, setExpenses] = useState([])
 
+  const { data: session } = useSession()
+
   const addCategory = async category => {
     try {
       const collectionRef = collection(db, 'gastos')
 
       const docSnap = await addDoc(collectionRef, {
+        uid: session.user.uid,
         ...category,
         items: []
       })
@@ -31,6 +36,7 @@ export const AppContextProvider = ({ children }) => {
       setExpenses(prevExpenses => {
         return [...prevExpenses, {
           id: docSnap.id,
+          uid: session.user.uid,
           items: [],
           ...category
         }]
@@ -65,6 +71,7 @@ export const AppContextProvider = ({ children }) => {
           const data = snapshot.docs.map(doc => {
             return {
               id: doc.id,
+              // uid: session.user.uid,
               ...doc.data()
             }
           })
@@ -75,6 +82,7 @@ export const AppContextProvider = ({ children }) => {
           const data = snapshot.docs.map(doc => {
             return {
               id: doc.id,
+              // uid: session.user.uid,
               ...doc.data()
             }
           })
@@ -184,9 +192,12 @@ export const AppContextProvider = ({ children }) => {
   }
 
   useEffect(() => {
+    if (!session) return
     const getIncomeDate = async () => {
       const collectionRef = collection(db, 'ingresos')
-      const docsSnap = await getDocs(collectionRef)
+      const q = query(collectionRef, where('uid', '==', session.user.uid))
+
+      const docsSnap = await getDocs(q)
 
       const data = docsSnap.docs.map(doc => {
         return {
@@ -201,7 +212,9 @@ export const AppContextProvider = ({ children }) => {
 
     const getExpensesData = async () => {
       const collectionRef = collection(db, 'gastos')
-      const docsSnap = await getDocs(collectionRef)
+      const q = query(collectionRef, where('uid', '==', session.user.uid))
+
+      const docsSnap = await getDocs(q)
 
       const data = docsSnap.docs.map(doc => {
         return {
@@ -213,7 +226,7 @@ export const AppContextProvider = ({ children }) => {
     }
     getIncomeDate()
     getExpensesData()
-  }, [])
+  }, [session])
 
   const removeIncomeItem = async incomeId => {
     const docRef = doc(db, 'ingresos', incomeId)
