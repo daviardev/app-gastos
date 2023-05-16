@@ -2,7 +2,7 @@ import { useState, useContext, useRef } from 'react'
 
 import { AppContext } from 'context/AppContext'
 
-import { v4 } from 'uuid'
+import { v4 as uuidV4 } from 'uuid'
 
 import Modal from './Modal'
 
@@ -39,7 +39,7 @@ export default function ModalExpenses ({ show, onClose }) {
         {
           amount: Number(inputExponses),
           createdAt: new Date(),
-          id: v4()
+          id: uuidV4()
         }
       ]
     }
