@@ -53,17 +53,24 @@ input[type=number] {
   overflow: hidden;
 }
 
-.circles li{
+.circles li {
   position: absolute;
   display: block;
   list-style: none;
   width: 20px;
   height: 20px;
-  background: rgba(255, 255, 255, .2);
   animation: animate 25s linear infinite;
   bottom: -150px;
-  
 }
+
+.circles li::before {
+  content: '💸';
+  display: block;
+  font-size: 50px;
+  line-height: 20px;
+  text-align: center;
+}
+
 
 .circles li:nth-child(1){
   left: 25%;
