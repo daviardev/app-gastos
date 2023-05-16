@@ -3,6 +3,8 @@ import { useContext, useState } from 'react'
 import { AppContext } from 'context/AppContext'
 import { currencyFormatter } from 'utils/currencyFormatter'
 
+import { useSession } from 'next-auth/react'
+
 import Modal from './Modal'
 
 import { FaRegTrashAlt } from 'react-icons/fa'
@@ -15,6 +17,8 @@ export default function ModalIncome ({ show, onClose }) {
 
   const { income, addIncomeItem, removeIncomeItem } = useContext(AppContext)
 
+  const { data: session } = useSession()
+
   const handlerIncome = async e => {
     e.preventDefault()
 
@@ -24,7 +28,8 @@ export default function ModalIncome ({ show, onClose }) {
     const newIncome = {
       amount: Number(inputAmount),
       description: inputDescription,
-      createdAt: new Date()
+      createdAt: new Date(),
+      uid: session.user.uid
     }
 
     try {
