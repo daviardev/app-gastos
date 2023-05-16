@@ -23,7 +23,7 @@ export default function Header () {
             <div className='h-[40px] w-[40px] rounded-full overflow-hidden'>
               <img
                 src={session.user.image}
-                alt=''
+                alt={session.user.name}
                 className='w-full h-full object-cover'
                 referrerPolicy='no-referrer'
               />
