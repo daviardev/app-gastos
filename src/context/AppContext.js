@@ -54,14 +54,20 @@ export const AppContextProvider = ({ children }) => {
         const incomeCollectionRef = collection(db, 'ingresos')
         const expensesCollectionRef = collection(db, 'gastos')
 
-        // Eliminar todos los documentos dentro de la colección de ingresos
-        const incomeDocs = await getDocs(incomeCollectionRef)
+        // Obtener los documentos de ingresos del usuario actual
+        const incomeQuerySnapshot = await query(incomeCollectionRef, where('uid', '==', session.user.uid))
+        const incomeDocs = await getDocs(incomeQuerySnapshot)
+
+        // Eliminar todos los documentos de ingresos del usuario actual
         incomeDocs.forEach(doc => {
           deleteDoc(doc.ref)
         })
 
-        // Eliminar todos los documentos dentro de la colección de gastos
-        const expensesDocs = await getDocs(expensesCollectionRef)
+        // Obtener los documentos de gastos del usuario actual
+        const expensesQuerySnapshot = await query(expensesCollectionRef, where('uid', '==', session.user.uid))
+        const expensesDocs = await getDocs(expensesQuerySnapshot)
+
+        // Eliminar todos los documentos de gastos del usuario actual
         expensesDocs.forEach(doc => {
           deleteDoc(doc.ref)
         })
@@ -71,7 +77,6 @@ export const AppContextProvider = ({ children }) => {
           const data = snapshot.docs.map(doc => {
             return {
               id: doc.id,
-              // uid: session.user.uid,
               ...doc.data()
             }
           })
@@ -82,7 +87,6 @@ export const AppContextProvider = ({ children }) => {
           const data = snapshot.docs.map(doc => {
             return {
               id: doc.id,
-              // uid: session.user.uid,
               ...doc.data()
             }
           })
