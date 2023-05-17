@@ -6,7 +6,7 @@ import { v4 as uuidV4 } from 'uuid'
 
 import Modal from './Modal'
 
-export default function ModalExpenses ({ show, onClose }) {
+export default function ModalExpenses ({ show, onClose, balance }) {
   const [loading, setLoading] = useState(false)
 
   const [inputTitle, setInputTitle] = useState('')
@@ -43,15 +43,23 @@ export default function ModalExpenses ({ show, onClose }) {
         }
       ]
     }
-
     try {
-      await addExpenseItem(selectCategory, newExpense)
+      if (expense.total + Number(inputExponses) > balance) {
+        window.alert('No puedes agregar más gastos. Por favor, pague sus deudas antes.')
 
-      onClose()
-      setLoading(false)
-      setInputExponses('')
-      setSelectCategory(null)
-      setShowAddExpense(false)
+        onClose()
+        setLoading(false)
+        setInputExponses('')
+        setSelectCategory(null)
+        setShowAddExpense(false)
+      } else {
+        await addExpenseItem(selectCategory, newExpense)
+        onClose()
+        setLoading(false)
+        setInputExponses('')
+        setSelectCategory(null)
+        setShowAddExpense(false)
+      }
     } catch (err) {
       console.error(err)
     }

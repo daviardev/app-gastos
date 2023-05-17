@@ -30,7 +30,7 @@ export default function Home ({ providers }) {
     const newBalance =
     income.reduce((total, index) => {
       return total + index.amount
-    }, 0)
+    }, 0) -
 
     expenses.reduce((total, index) => {
       return total + index.total
@@ -59,6 +59,7 @@ export default function Home ({ providers }) {
       <ModalExpenses
         show={modalExpensesIsOpen}
         onClose={setModalExpensesIsOpen}
+        balance={balance}
       />
 
       <main className='container max-w-2xl px-6 mx-auto'>
