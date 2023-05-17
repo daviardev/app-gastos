@@ -101,7 +101,7 @@ export default function ModalIncome ({ show, onClose }) {
                 <div className='mb-4 flex justify-between item-center' key={index.id}>
                   <div>
                     <p className='font-semibold'>{index.description}</p>
-                    <small className='text-xs'>{index.createdAt.toISOString()}</small>
+                    <small className='text-xs'>{index.createdAt instanceof Date && index.createdAt.toISOString()}</small>
                   </div>
                   <p className='flex items-center gap-2'>
                     {currencyFormatter(index.amount)}
