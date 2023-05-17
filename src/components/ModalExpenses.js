@@ -8,13 +8,13 @@ import Modal from './Modal'
 
 export default function ModalExpenses ({ show, onClose, balance }) {
   const [loading, setLoading] = useState(false)
+  const [showAddExpense, setShowAddExpense] = useState(false)
+  const [showInputExpense, setShowInputExpense] = useState(false)
 
   const [inputTitle, setInputTitle] = useState('')
   const [inputExponses, setInputExponses] = useState('')
 
   const [selectCategory, setSelectCategory] = useState(null)
-
-  const [showAddExpense, setShowAddExpense] = useState(false)
 
   const { expenses, addExpenseItem, addCategory } = useContext(AppContext)
 
@@ -54,6 +54,7 @@ export default function ModalExpenses ({ show, onClose, balance }) {
         setShowAddExpense(false)
       } else {
         await addExpenseItem(selectCategory, newExpense)
+
         onClose()
         setLoading(false)
         setInputExponses('')
@@ -62,6 +63,16 @@ export default function ModalExpenses ({ show, onClose, balance }) {
       }
     } catch (err) {
       console.error(err)
+    }
+  }
+
+  const handleCategorySelection = categoryId => {
+    if (categoryId === selectCategory) {
+      setSelectCategory(null)
+      setShowInputExpense(false)
+    } else {
+      setSelectCategory(categoryId)
+      setShowInputExpense(true)
     }
   }
 
@@ -76,10 +87,11 @@ export default function ModalExpenses ({ show, onClose, balance }) {
       await addCategory({ title, color, total: 0 })
 
       onClose()
+      setLoading(false)
       setInputTitle('')
       setInputExponses('')
       setShowAddExpense(false)
-      setLoading(false)
+      setSelectCategory(false)
     } catch (error) {
       console.error(error)
     }
@@ -90,27 +102,35 @@ export default function ModalExpenses ({ show, onClose, balance }) {
         show={show}
         onClose={onClose}
       >
-        <form className='input-group' onSubmit={handlerExpenses}>
+        <form onSubmit={handlerExpenses}>
           <div className='input-group'>
-            <label htmlFor='exponses' className='flex px-2'>Ingrese gasto</label>
-            <input
-              min={100}
-              value={inputExponses}
-              type='number'
-              onChange={e => setInputExponses(e.target.value)}
-              required
-              className={`input ${loading && 'opacity-60'}`}
-              placeholder='Ingrese la cantidad que va a gastar'
-            />
             <div className='flex flex-col gap-4 mt-6'>
-              <div className='flex items-center justify-between'>
-                <h3 className='text-1xl'>Seleccione una de las categorías creadas</h3>
-                <button className='btn btn-primary-outline' onClick={() => setShowAddExpense(true)}>
-                  Crear nueva categoría
-                </button>
-              </div>
-              {showAddExpense && (
+              {!selectCategory
+                ? showInputExpense
+                : (
+                  <div className='input-group'>
+                    <label htmlFor='exponses' className='flex px-2'>Ingrese gasto</label>
+                    <input
+                      min={100}
+                      value={inputExponses}
+                      type='number'
+                      onChange={e => setInputExponses(e.target.value)}
+                      required
+                      className={`input ${loading && 'opacity-60'}`}
+                      placeholder='Ingrese la cantidad que va a gastar'
+                    />
+                  </div>
+                  )}
+              {!selectCategory && (
                 <div className='flex items-center justify-between'>
+                  <h3 className='text-1xl'>Seleccione una de las categorías creadas</h3>
+                  <button className='btn btn-primary-outline' onClick={() => setShowAddExpense(true)}>
+                    Crear nueva categoría
+                  </button>
+                </div>
+              )}
+              {!selectCategory && showAddExpense && (
+                <div className='flex flex-col gap-4 px-4 py-4 md:items-center md:flex-row'>
                   <input
                     type='text'
                     value={inputTitle}
@@ -141,8 +161,10 @@ export default function ModalExpenses ({ show, onClose, balance }) {
                   >
                     Cancelar
                   </button>
+
                 </div>
               )}
+              {}
               <div className='input-group'>
                 <div className='flex flex-col gap-4 h-[195px] overflow-auto history-scroll'>
                   {expenses.map(index => {
@@ -150,7 +172,7 @@ export default function ModalExpenses ({ show, onClose, balance }) {
                       <button
                         type='button'
                         key={index.id}
-                        onClick={() => setSelectCategory(index.id)}
+                        onClick={() => handleCategorySelection(index.id)}
                       >
                         <div
                           style={{ boxShadow: index.id === selectCategory ? '1px 1px 4px' : 'none' }}
