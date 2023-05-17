@@ -88,6 +88,7 @@ export default function Home ({ providers }) {
         </section>
 
         <section className='py-6'>
+          <a id='stats' />
           <h3 className='text-2xl'>Estadísticas</h3>
           <div className='xl:w-1/3 2xl:w-1/3 mx-auto md:1/4 sm:w-1/4'>
             <Doughnut

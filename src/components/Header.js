@@ -32,7 +32,9 @@ export default function Header () {
           </div>
 
           <nav className='flex items-center gap-2'>
-            <ImStatsDots className='text-2xl mr-6' />
+            <a href='#stats'>
+              <ImStatsDots className='text-2xl mr-6' />
+            </a>
             <button className='btn btn-primary' onClick={removeAllDatas}>
               Restablecer valores
             </button>

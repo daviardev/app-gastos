@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 
+import { toast } from 'react-toastify'
 import { FaRegTrashAlt } from 'react-icons/fa'
 
 import { AppContext } from 'context/AppContext'
@@ -13,8 +14,10 @@ export default function ViewExpenseModal ({ show, onClose, expense }) {
   const deleteExpenseHandler = async () => {
     try {
       await deleteExpenseCategory(expense.id)
+      toast.success('Se ha eliminado la categoría')
     } catch (err) {
       console.error(err)
+      toast.error(err)
       throw err
     }
   }
@@ -29,8 +32,10 @@ export default function ViewExpenseModal ({ show, onClose, expense }) {
       }
 
       await deleteExpenseItem(updatedExpense, expense.id)
+      toast.success('Se ha eliminado correctamente')
     } catch (err) {
       console.error(err)
+      toast.error(err)
       throw err
     }
   }

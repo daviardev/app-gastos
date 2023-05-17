@@ -2,6 +2,7 @@ import { useState, useContext, useRef } from 'react'
 
 import { AppContext } from 'context/AppContext'
 
+import { toast } from 'react-toastify'
 import { v4 as uuidV4 } from 'uuid'
 
 import Modal from './Modal'
@@ -43,9 +44,10 @@ export default function ModalExpenses ({ show, onClose, balance }) {
         }
       ]
     }
+
     try {
       if (expense.total + Number(inputExponses) > balance) {
-        window.alert('No puedes agregar más gastos. Por favor, pague sus deudas antes.')
+        toast.error('No puedes agregar más gastos. Por favor, pague sus deudas antes.')
 
         onClose()
         setLoading(false)
@@ -54,6 +56,7 @@ export default function ModalExpenses ({ show, onClose, balance }) {
         setShowAddExpense(false)
       } else {
         await addExpenseItem(selectCategory, newExpense)
+        toast.success('Gasto agregado correctamente')
 
         onClose()
         setLoading(false)
@@ -63,6 +66,7 @@ export default function ModalExpenses ({ show, onClose, balance }) {
       }
     } catch (err) {
       console.error(err)
+      toast.error(err)
     }
   }
 
@@ -86,6 +90,8 @@ export default function ModalExpenses ({ show, onClose, balance }) {
     try {
       await addCategory({ title, color, total: 0 })
 
+      toast.success(`La categoría ${title} ha sido creada`)
+
       onClose()
       setLoading(false)
       setInputTitle('')
@@ -94,6 +100,7 @@ export default function ModalExpenses ({ show, onClose, balance }) {
       setSelectCategory(false)
     } catch (error) {
       console.error(error)
+      toast.error(error)
     }
   }
   return (

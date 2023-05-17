@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react'
 import Modal from './Modal'
 
 import { FaRegTrashAlt } from 'react-icons/fa'
+import { toast } from 'react-toastify'
 
 export default function ModalIncome ({ show, onClose }) {
   const [inputAmount, setInputAmount] = useState('')
@@ -35,20 +36,26 @@ export default function ModalIncome ({ show, onClose }) {
     try {
       await addIncomeItem(newIncome)
 
+      toast.success('Nuevo saldo agregado exitosamente')
+
       onClose()
       setLoading(false)
       setInputAmount('')
       setInputDescription('')
     } catch (err) {
       console.error(err)
+      toast.error(err)
     }
   }
 
   const deleteIncomeEntry = async incomeId => {
     try {
       await removeIncomeItem(incomeId)
+
+      toast.success('Saldo eliminado')
     } catch (err) {
       console.error(err)
+      toast.error(err)
     }
   }
   return (

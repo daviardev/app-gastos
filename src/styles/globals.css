@@ -5,6 +5,9 @@
 @import url('normalize.css');
 
 @layer base {
+  html {
+    scroll-behavior: smooth
+  }
   body {
     @apply bg-[#22272e] text-[#cdd9e5] relative;
   }
