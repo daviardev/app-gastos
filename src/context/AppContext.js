@@ -74,22 +74,26 @@ export const AppContextProvider = ({ children }) => {
 
         // Suscribirse al evento onSnapshot() para actualizar el estado de la aplicación
         const unsubscribeIncome = onSnapshot(incomeCollectionRef, snapshot => {
-          const data = snapshot.docs.map(doc => {
-            return {
-              id: doc.id,
-              ...doc.data()
-            }
-          })
+          const data = snapshot.docs
+            .filter(doc => doc.data().uid === session.user.uid) // Filtrar por el uid del usuario actual
+            .map(doc => {
+              return {
+                id: doc.id,
+                ...doc.data()
+              }
+            })
           setIncome(data)
         })
 
         const unsubscribeExpenses = onSnapshot(expensesCollectionRef, snapshot => {
-          const data = snapshot.docs.map(doc => {
-            return {
-              id: doc.id,
-              ...doc.data()
-            }
-          })
+          const data = snapshot.docs
+            .filter(doc => doc.data().uid === session.user.uid) // Filtrar por el uid del usuario actual
+            .map(doc => {
+              return {
+                id: doc.id,
+                ...doc.data()
+              }
+            })
           setExpenses(data)
         })
 
