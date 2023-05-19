@@ -176,7 +176,7 @@ input[type=number] {
   }
 
   .btn-primary {
-    @apply border border-[#fc0137] text-[#fc0137];
+    @apply borderborder-red-400 text-red-400;
   }
 
   .btn-primary-outline {
