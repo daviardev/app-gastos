@@ -5,6 +5,8 @@ import { collection, addDoc, doc, deleteDoc, getDocs, updateDoc, onSnapshot, que
 
 import { useSession } from 'next-auth/react'
 
+import Swal from 'sweetalert2'
+
 export const AppContext = createContext({
   income: [],
   expenses: [],
@@ -48,7 +50,21 @@ export const AppContextProvider = ({ children }) => {
   }
 
   const deleteAllDocs = async () => {
-    if (window.confirm('Se eliminarán las transacciones hechas, ¿Desea continuar?')) {
+    const result = await Swal.fire({
+      title: 'Se eliminarán las transacciones hechas, ¿Desea continuar?',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    })
+
+    if (result.isConfirmed) {
+      Swal.fire(
+        'Datos eliminados!',
+        '',
+        'success'
+      )
       try {
         // Obtener una referencia a cada colección que deseas eliminar
         const incomeCollectionRef = collection(db, 'ingresos')
@@ -59,18 +75,14 @@ export const AppContextProvider = ({ children }) => {
         const incomeDocs = await getDocs(incomeQuerySnapshot)
 
         // Eliminar todos los documentos de ingresos del usuario actual
-        incomeDocs.forEach(doc => {
-          deleteDoc(doc.ref)
-        })
+        await Promise.all(incomeDocs.docs.map(doc => deleteDoc(doc.ref)))
 
         // Obtener los documentos de gastos del usuario actual
         const expensesQuerySnapshot = await query(expensesCollectionRef, where('uid', '==', session.user.uid))
         const expensesDocs = await getDocs(expensesQuerySnapshot)
 
         // Eliminar todos los documentos de gastos del usuario actual
-        expensesDocs.forEach(doc => {
-          deleteDoc(doc.ref)
-        })
+        await Promise.all(expensesDocs.docs.map(doc => deleteDoc(doc.ref)))
 
         // Suscribirse al evento onSnapshot() para actualizar el estado de la aplicación
         const unsubscribeIncome = onSnapshot(incomeCollectionRef, snapshot => {
@@ -106,7 +118,11 @@ export const AppContextProvider = ({ children }) => {
         console.error(error)
       }
     } else {
-      window.alert('No se hicieron cambios.')
+      Swal.fire(
+        'Cancelado',
+        'No se hicieron cambios.',
+        'error'
+      )
     }
   }
 
