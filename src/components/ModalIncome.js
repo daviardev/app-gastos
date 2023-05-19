@@ -102,7 +102,7 @@ export default function ModalIncome ({ show, onClose }) {
 
         <div className='input-group mt-6'>
           <h3 className='text-2xl font-bold'>Historial de ingresos</h3>
-          <div className='h-full overflow-auto history-scroll'>
+          <div className='h-[280px] overflow-auto history-scroll'>
             {income.map(index => {
               return (
                 <div className='mb-4 flex justify-between item-center' key={index.id}>

@@ -51,7 +51,7 @@ export default function ViewExpenseModal ({ show, onClose, expense }) {
       <br />
       <hr />
 
-      <div>
+      <div className='h-[350px] overflow-auto history-scroll'>
         <h3 className='my-4 text-2xl'>Historial de gastos</h3>
         {expense.items.map(item => {
           return (

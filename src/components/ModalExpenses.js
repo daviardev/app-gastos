@@ -173,7 +173,7 @@ export default function ModalExpenses ({ show, onClose, balance }) {
               )}
               {}
               <div className='input-group'>
-                <div className='flex flex-col gap-4 h-[195px] overflow-auto history-scroll'>
+                <div className='flex flex-col gap-4 h-[400px] overflow-auto history-scroll'>
                   {expenses.map(index => {
                     return (
                       <button
